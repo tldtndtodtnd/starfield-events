@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>스타필드 행사 모아보기</title>
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1d1d1f;--sub:#6e6e73;--accent:#e4002b;--line:#e5e3de}
+@media (prefers-color-scheme:dark){:root{--bg:#121212;--card:#1e1e1e;--text:#f2f2f2;--sub:#9a9a9f;--line:#2e2e2e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+header{padding:24px 16px 8px;max-width:720px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--sub);font-size:13px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;max-width:720px;margin:0 auto}
+.tab{flex:none;border:1px solid var(--line);background:var(--card);color:var(--text);padding:8px 14px;border-radius:999px;font-size:14px;cursor:pointer}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+main{max-width:720px;margin:0 auto;padding:4px 16px 40px;display:grid;gap:16px}
+.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit}
+.thumb{position:relative;aspect-ratio:16/9;background:var(--line)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.badge{position:absolute;top:12px;left:12px;background:var(--accent);color:#fff;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px}
+.body{padding:14px 16px 16px}
+.branch{font-size:12px;color:var(--accent);font-weight:600}
+.title{font-size:17px;font-weight:600;margin:4px 0 6px;line-height:1.4}
+.term{font-size:13px;color:var(--sub)}
+.empty{text-align:center;color:var(--sub);padding:48px 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>스타필드 행사 모아보기</h1>
+  <div class="sub">지점을 골라 진행 중인 행사를 확인하세요</div>
+</header>
+<div class="tabs" id="tabs"></div>
+<main id="list"></main>
+<script>
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const DEFAULT_BRANCH = "동탄점";
+let events = [], current = "";
+
+function daysLeft(end){
+  const d = new Date(String(end).replace(" ", "T"));
+  return Math.ceil((d - new Date()) / 86400000);
+}
+
+function render(){
+  const list = document.getElementById("list");
+  const items = events
+    .filter(e => e.branch === current)
+    .sort((a, b) => String(a.endDate).localeCompare(String(b.endDate)));
+  if (!items.length){ list.innerHTML = '<div class="empty">진행 중인 행사가 없어요</div>'; return; }
+  list.innerHTML = items.map(e => {
+    const n = daysLeft(e.endDate);
+    const badge = n >= 0 && n <= 7 ? `<span class="badge">D-${n}</span>` : "";
+    return `<a class="card" href="${esc(e.url)}" target="_blank" rel="noopener">
+      <div class="thumb"><img src="${esc(e.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">${badge}</div>
+      <div class="body">
+        <div class="branch">${esc(e.branch)}</div>
+        <div class="title">${esc(e.title)}</div>
+        <div class="term">${esc(e.term)}</div>
+      </div></a>`;
+  }).join("");
+}
+
+function renderTabs(){
+  const names = [...new Set(events.map(e => e.branch))];
+  const tabs = document.getElementById("tabs");
+  tabs.innerHTML = names.map(n => `<button class="tab ${n===current?"on":""}" data-b="${esc(n)}">${esc(n)}</button>`).join("");
+  tabs.querySelectorAll(".tab").forEach(b => b.onclick = () => { current = b.dataset.b; renderTabs(); render(); });
+}
+
+fetch("events.json?t=" + Date.now())
+  .then(r => r.json())
+  .then(data => {
+    events = data;
+    const names = [...new Set(events.map(e => e.branch))];
+    current = names.includes(DEFAULT_BRANCH) ? DEFAULT_BRANCH : names[0];
+    renderTabs(); render();
+  })
+  .catch(() => { document.getElementById("list").innerHTML = '<div class="empty">데이터를 불러오지 못했어요</div>'; });
+</script>
+</body>
+</html>

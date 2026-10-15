@@ -1,0 +1,32 @@
+[
+  {
+    "id": "dongtan-18-1",
+    "branchId": "1085",
+    "branch": "동탄점",
+    "title": "뛰뛰빵빵 이상한 나라의 앨리스",
+    "image": "https://www.starfieldmarket.com/daumeditor/2026/9/29/20260929_1515049_008.png",
+    "term": "10/17(토) · 14 · 16시 · 뮤지컬",
+    "endDate": "2026-10-17 23:59:59",
+    "url": "https://www.starfieldmarket.com/event/detail/18?isApp=false&branch=1085"
+  },
+  {
+    "id": "suwon-EV202609291726062865",
+    "branchId": "suwon",
+    "branch": "스타필드 수원",
+    "title": "별마당 도서관 10월 강연&공연 안내",
+    "image": "https://www.starfield.co.kr/cdn/starfield_09/evt/20260929/IM20260929052606591473.jpg",
+    "term": "남은 일정 10/21(수) · 10/28(수)",
+    "endDate": "2026-10-21 23:59:59",
+    "url": "https://www.starfield.co.kr/suwon/eventBenefit/events/EV202609291726062865"
+  },
+  {
+    "id": "suwon-EV202609281513002850",
+    "branchId": "suwon",
+    "branch": "스타필드 수원",
+    "title": "10월 키즈프로그램",
+    "image": "https://www.starfield.co.kr/cdn/starfield_09/evt/20260928/IM20260928031300621765.jpg",
+    "term": "남은 일정 10/17(토) · 10/24(토) · 10/31(토)",
+    "endDate": "2026-10-17 23:59:59",
+    "url": "https://www.starfield.co.kr/suwon/eventBenefit/events/EV202609281513002850"
+  }
+]
