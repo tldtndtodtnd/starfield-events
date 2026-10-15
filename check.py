@@ -12,5 +12,5 @@ for i in range(1, 1001):
     except Exception:
         d = None
     time.sleep(0.2)
-    if d and d.get("branchNm") == "동탄점":
+    if d and d.get("branchNm") == "스타필드마켓 동탄점":
         print(i, d.get("eventTitle"), "| 노출:", d.get("eventDispYn"), "| 종료:", d.get("eventDispEdate"))
