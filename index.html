@@ -35,50 +35,54 @@ main{max-width:720px;margin:0 auto;padding:4px 16px 40px;display:grid;gap:16px}
 <div class="tabs" id="tabs"></div>
 <main id="list"></main>
 <script>
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const DEFAULT_BRANCH = "동탄점";
-let events = [], current = "";
-
-function daysLeft(end){
-  const d = new Date(String(end).replace(" ", "T"));
-  return Math.ceil((d - new Date()) / 86400000);
-}
-
-function render(){
-  const list = document.getElementById("list");
-  const items = events
-    .filter(e => e.branch === current)
-    .sort((a, b) => String(a.endDate).localeCompare(String(b.endDate)));
-  if (!items.length){ list.innerHTML = '<div class="empty">진행 중인 행사가 없어요</div>'; return; }
-  list.innerHTML = items.map(e => {
-    const n = daysLeft(e.endDate);
-    const badge = n >= 0 && n <= 7 ? `<span class="badge">D-${n}</span>` : "";
-    return `<a class="card" href="${esc(e.url)}" target="_blank" rel="noopener">
-      <div class="thumb"><img src="${esc(e.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">${badge}</div>
-      <div class="body">
-        <div class="branch">${esc(e.branch)}</div>
-        <div class="title">${esc(e.title)}</div>
-        <div class="term">${esc(e.term)}</div>
-      </div></a>`;
-  }).join("");
-}
-
-function renderTabs(){
-  const names = [...new Set(events.map(e => e.branch))];
-  const tabs = document.getElementById("tabs");
-  tabs.innerHTML = names.map(n => `<button class="tab ${n===current?"on":""}" data-b="${esc(n)}">${esc(n)}</button>`).join("");
-  tabs.querySelectorAll(".tab").forEach(b => b.onclick = () => { current = b.dataset.b; renderTabs(); render(); });
-}
-
-fetch("events.json?t=" + Date.now())
-  .then(r => r.json())
-  .then(data => {
-    events = data;
-    const names = [...new Set(events.map(e => e.branch))];
-    current = names.includes(DEFAULT_BRANCH) ? DEFAULT_BRANCH : names[0];
-    renderTabs(); render();
-  })
-  .catch(() => { document.getElementById("list").innerHTML = '<div class="empty">데이터를 불러오지 못했어요</div>'; });
-</script>
+    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    
+    // 항상 보여줄 탭. 링크는 행사가 없을 때 안내용이에요.
+    const BRANCHES = [
+      { name: "동탄점", link: "https://www.starfieldmarket.com" },
+      { name: "스타필드 수원", link: "https://www.starfield.co.kr/suwon/eventBenefit/events" },
+    ];
+    let events = [], current = BRANCHES[0].name;
+    
+    function daysLeft(end){
+      const d = new Date(String(end).replace(" ", "T"));
+      return Math.ceil((d - new Date()) / 86400000);
+    }
+    
+    function render(){
+      const list = document.getElementById("list");
+      const items = events
+        .filter(e => e.branch === current)
+        .sort((a, b) => String(a.endDate).localeCompare(String(b.endDate)));
+      if (!items.length){
+        const b = BRANCHES.find(x => x.name === current);
+        list.innerHTML = `<div class="empty">지금 진행 중인 행사가 없어요<br><br>
+          <a href="${esc(b.link)}" target="_blank" rel="noopener" style="color:var(--accent)">공식 페이지에서 확인하기</a></div>`;
+        return;
+      }
+      list.innerHTML = items.map(e => {
+        const n = daysLeft(e.endDate);
+        const badge = n >= 0 && n <= 7 ? `<span class="badge">D-${n}</span>` : "";
+        return `<a class="card" href="${esc(e.url)}" target="_blank" rel="noopener">
+          <div class="thumb"><img src="${esc(e.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">${badge}</div>
+          <div class="body">
+            <div class="branch">${esc(e.branch)}</div>
+            <div class="title">${esc(e.title)}</div>
+            <div class="term">${esc(e.term)}</div>
+          </div></a>`;
+      }).join("");
+    }
+    
+    function renderTabs(){
+      const tabs = document.getElementById("tabs");
+      tabs.innerHTML = BRANCHES.map(b => `<button class="tab ${b.name===current?"on":""}" data-b="${esc(b.name)}">${esc(b.name)}</button>`).join("");
+      tabs.querySelectorAll(".tab").forEach(b => b.onclick = () => { current = b.dataset.b; renderTabs(); render(); });
+    }
+    
+    fetch("events.json?t=" + Date.now())
+      .then(r => r.json())
+      .then(data => { events = data; renderTabs(); render(); })
+      .catch(() => { renderTabs(); document.getElementById("list").innerHTML = '<div class="empty">데이터를 불러오지 못했어요</div>'; });
+    </script>
 </body>
 </html>
