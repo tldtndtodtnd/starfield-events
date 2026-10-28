@@ -1,5 +1,25 @@
 [
   {
+    "id": "dongtan-18-0",
+    "branchId": "1085",
+    "branch": "동탄점",
+    "title": "꼬마박사 장영실",
+    "image": "https://www.starfieldmarket.com/daumeditor/2026/10/28/20261028_1009025_007.png",
+    "term": "11/14(토) · 14 · 16시 · 뮤지컬",
+    "endDate": "2026-11-14 23:59:59",
+    "url": "https://www.starfieldmarket.com/event/detail/18?isApp=false&branch=1085"
+  },
+  {
+    "id": "dongtan-18-1",
+    "branchId": "1085",
+    "branch": "동탄점",
+    "title": "수상한 사탕가게",
+    "image": "https://www.starfieldmarket.com/daumeditor/2026/10/28/20261028_1012020_008.png",
+    "term": "11/21(토) · 14 · 16시 · 마술쇼",
+    "endDate": "2026-11-21 23:59:59",
+    "url": "https://www.starfieldmarket.com/event/detail/18?isApp=false&branch=1085"
+  },
+  {
     "id": "suwon-EV202610231120213069",
     "branchId": "suwon",
     "branch": "스타필드 수원",
